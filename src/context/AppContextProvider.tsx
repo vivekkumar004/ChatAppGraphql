@@ -1,8 +1,11 @@
 import { createContext, Dispatch, SetStateAction, useState } from "react";
 
-type ChannelType = "General Channel" | "Technology Channel" | "LGTM Channel";
+export type ChannelType =
+  | "General Channel"
+  | "Technology Channel"
+  | "LGTM Channel";
 
-type UserType = "Joyse" | "Sam" | "Russell";
+export type UserType = "Joyse" | "Sam" | "Russell";
 
 interface AppContextType {
   user: UserType;
