@@ -19,7 +19,6 @@ function ChatScreen() {
   const [message, setMessage] = useState<string>(() => {
     return localStorage.getItem("inputText") || "";
   });
-  const [loading, setLoading] = useState(true);
   const [latestButtonClicked, setLatestButtonClicked] = useState(false);
   const [lastMessageId, setLastMessageId] = useState("");
   const [messagesArray, setMessagesArray] = useState<ProcessedMessageType[]>(
