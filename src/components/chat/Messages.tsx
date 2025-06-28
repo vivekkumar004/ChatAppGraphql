@@ -21,7 +21,13 @@ const statusText = {
   marginLeft: 5,
 };
 
-function Messages({ data }: { data: ProcessedMessageType[] }) {
+function Messages({
+  data,
+  showArrayReverseOrder,
+}: {
+  data: ProcessedMessageType[];
+  showArrayReverseOrder: boolean;
+}) {
   const { user, channel } = useContext(AppContext);
 
   return (
@@ -30,7 +36,7 @@ function Messages({ data }: { data: ProcessedMessageType[] }) {
         overflow: "auto",
         height: "100%",
         display: "flex",
-        flexDirection: "column-reverse",
+        flexDirection: showArrayReverseOrder ? "column" : "column-reverse",
       }}
     >
       {data.map((item: ProcessedMessageType) => {

@@ -12,6 +12,7 @@ export const commonButtonStyle = {
   display: "flex",
   alignItems: "center",
   gap: 3,
+  cursor: "pointer",
 };
 export const StyledText = styled.p`
   font-size: 1rem;

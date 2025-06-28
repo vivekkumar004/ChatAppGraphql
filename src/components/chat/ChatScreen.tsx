@@ -19,6 +19,9 @@ function ChatScreen() {
   const [message, setMessage] = useState<string>(() => {
     return localStorage.getItem("inputText") || "";
   });
+  const [loading, setLoading] = useState(true);
+  const [latestButtonClicked, setLatestButtonClicked] = useState(false);
+  const [lastMessageId, setLastMessageId] = useState("");
   const [messagesArray, setMessagesArray] = useState<ProcessedMessageType[]>(
     []
   );
@@ -89,27 +92,30 @@ function ChatScreen() {
   }, [olderMessageData, olderMessageError]);
 
   const handleShowLatestMessage = () => {
-    if (messagesArray.length > 0) {
-      const channelId = String(channelOption.indexOf(channel) + 1);
-      const messageId = messagesArray[0].messageId;
+    setLatestButtonClicked(true);
+    const channelId = String(channelOption.indexOf(channel) + 1);
+    const messageId = messagesArray[0]?.messageId || lastMessageId;
+    setLastMessageId(messageId);
+    console.log("from lates", messageId);
 
-      getOlderMessages({
-        variables: { channelId, messageId, old: false },
-        fetchPolicy: "network-only",
-      });
-    } else toast.error("conversation empty.");
+    getOlderMessages({
+      variables: { channelId, messageId, old: false },
+      fetchPolicy: "network-only",
+    });
   };
 
   const handleShowPreviousMessage = () => {
-    if (messagesArray.length > 0) {
-      const channelId = String(channelOption.indexOf(channel) + 1);
-      const messageId = messagesArray[messagesArray.length - 1].messageId;
+    setLatestButtonClicked(false);
+    const channelId = String(channelOption.indexOf(channel) + 1);
+    const messageId =
+      messagesArray[messagesArray.length - 1]?.messageId || lastMessageId;
+    setLastMessageId(messageId);
+    console.log("from previosu", messageId);
 
-      getOlderMessages({
-        variables: { channelId, messageId, old: true },
-        fetchPolicy: "network-only",
-      });
-    } else toast.error("conversation empty.");
+    getOlderMessages({
+      variables: { channelId, messageId, old: true },
+      fetchPolicy: "network-only",
+    });
   };
 
   const handleMutationError = () => {
@@ -184,22 +190,39 @@ function ChatScreen() {
       </h5>
       <div style={{ height: "67vh", position: "relative" }}>
         <button
+          disabled={messagesArray.length < 1 && !latestButtonClicked}
           onClick={handleShowPreviousMessage}
-          style={{ ...commonButtonStyle, position: "absolute", top: 10 }}
+          style={{
+            ...commonButtonStyle,
+            position: "absolute",
+            top: 10,
+            ...(messagesArray.length < 1 &&
+              !latestButtonClicked && { opacity: 0.5 }),
+          }}
         >
           Read More
           <TiArrowUpThick />
         </button>
         <button
           onClick={handleShowLatestMessage}
-          style={{ ...commonButtonStyle, position: "absolute", bottom: 10 }}
+          disabled={messagesArray.length < 1 && latestButtonClicked}
+          style={{
+            ...commonButtonStyle,
+            position: "absolute",
+            bottom: 10,
+            ...(messagesArray.length < 1 &&
+              latestButtonClicked && { opacity: 0.5 }),
+          }}
         >
           Read More <TiArrowDownThick />
         </button>
 
         <div style={{ height: "100%" }}>
           {messagesArray.length > 0 ? (
-            <Messages data={messagesArray} />
+            <Messages
+              showArrayReverseOrder={latestButtonClicked}
+              data={messagesArray}
+            />
           ) : (
             <p
               style={{
